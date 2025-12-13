@@ -1,0 +1,34 @@
+# This first line is crucial for installing PyTorch with CUDA support
+--extra-index-url https://download.pytorch.org/whl/cu121
+
+# --- Core Framework & API ---
+fastapi
+uvicorn
+python-multipart
+watchfiles
+pydantic
+
+# --- LangChain & RAG Stack ---
+langchain
+langchain-community
+langchain-core
+langchain-huggingface
+langchain-chroma
+langchain-ollama
+chromadb
+sentence-transformers
+
+# --- Document Processing & OCR ---
+python-docx
+python-pptx
+pdf2image
+pytesseract
+pillow
+unstructured
+
+# --- Audio & TTS ---
+# Note: TTS is a heavy library. If you have installation issues, 
+# you might need to install torch separately first.
+TTS
+torch
+torchaudio
