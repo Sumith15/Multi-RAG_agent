@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uni-RAG | Classification Report</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Rajdhani:wght@500;700&display=swap');
+
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-green: #00ff9d;
+            --neon-red: #ff3860;
+            --bg-dark: #050510;
+            --glass-bg: rgba(15, 20, 35, 0.7);
+            --border-color: rgba(0, 243, 255, 0.3);
+            --text-main: #e0e6ed;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            margin: 0; padding: 0;
+            height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        /* Neural Background */
+        .grid-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(20, 30, 60, 0.4) 0%, rgba(5, 5, 16, 1) 70%),
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%; max-width: 800px;
+            padding: 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            position: relative;
+        }
+
+        /* Top Accent Line */
+        .container::after {
+            content: ''; position: absolute; top: -1px; left: 20%; right: 20%; height: 2px;
+            background: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        h1 {
+            font-family: 'Rajdhani', sans-serif; font-size: 2.5rem;
+            color: white; margin-top: 0; letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+        h1 span { color: var(--neon-blue); }
+
+        /* Terminal Results Window */
+        .terminal-window {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 6px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Header Row for Log */
+        .log-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 2fr;
+            padding: 10px;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            color: var(--neon-blue);
+            font-weight: bold;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        /* Data Rows */
+        .log-entry {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 2fr;
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+            align-items: center;
+        }
+        .log-entry:last-child { border-bottom: none; }
+
+        .status-success { color: var(--neon-green); }
+        .status-error { color: var(--neon-red); }
+        .category { color: var(--text-muted); }
+        .message { color: var(--text-muted); font-size: 0.8rem; }
+        .filename { color: var(--text-main); font-weight: 600; }
+
+        /* Button */
+        .btn {
+            display: inline-block;
+            background: transparent;
+            color: var(--neon-blue);
+            padding: 12px 25px;
+            border: 1px solid var(--neon-blue);
+            border-radius: 6px;
+            text-decoration: none;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+        .btn:hover { background: var(--neon-blue); color: black; box-shadow: 0 0 15px rgba(0,243,255,0.4); }
+
+        /* Scrollbar */
+        .terminal-window::-webkit-scrollbar { width: 8px; }
+        .terminal-window::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="grid-bg"></div>
+
+    <div class="container">
+        <h1>Classification <span>Report</span></h1>
+        
+        <div class="terminal-window">
+            <div style="color: #666; font-size: 0.8em; margin-bottom: 10px;">> SYSTEM: Batch processing complete. {{ results|length }} files analyzed.</div>
+            
+            <div class="log-header">
+                <div>File Name</div>
+                <div>Category</div>
+                <div>Status</div>
+                <div>Result Path</div>
+            </div>
+
+            {% if results %}
+                {% for result in results %}
+                <div class="log-entry">
+                    <div class="filename">{{ result.filename }}</div>
+                    
+                    <div class="category">{{ result.category }}</div>
+                    
+                    <div class="{% if result.status == 'Success' %}status-success{% else %}status-error{% endif %}">
+                        [{{ result.status }}]
+                    </div>
+                    
+                    <div class="message">{{ result.message }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="padding: 20px; text-align: center; color: #666;">
+                    No files processed.
+                </div>
+            {% endif %}
+            
+            <div style="color: var(--neon-green); font-size: 0.8em; margin-top: 15px;">> SYSTEM: Log end.</div>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="btn">Upload New Documents</a>
+    </div>
+
+</body>
+</html>
