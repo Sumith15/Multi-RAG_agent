@@ -1,0 +1,5 @@
+flask
+pandas
+pdfminer.six
+nltk
+scikit-learn
