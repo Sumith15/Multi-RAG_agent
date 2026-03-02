@@ -12,7 +12,7 @@
 1. Nuka Sumith Chandra  
 2. Gongalreddy Sri Venkat Reddy  
 3. V Vijay Chandra
-4. SK NEHA
+4. SK Neha
 5. Tadipatri Soumya Murthy
 6. Edupuganti Dheeraj Chandra
 
