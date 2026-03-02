@@ -10,9 +10,11 @@
 
 **Team Members:**
 1. Nuka Sumith Chandra  
-2. Edupuganti Dheeraj Chandra  
-3. Gongalreddy Sri Venkat Reddy  
-4. V Vijay Chandra  
+2. Gongalreddy Sri Venkat Reddy  
+3. V Vijay Chandra
+4. SK NEHA
+5. Tadipatri Soumya Murthy
+6. Edupuganti Dheeraj Chandra
 
 ## 📖 Overview
 
